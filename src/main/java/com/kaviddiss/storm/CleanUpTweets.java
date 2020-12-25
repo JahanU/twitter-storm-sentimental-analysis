@@ -48,6 +48,8 @@ public class CleanUpTweets extends BaseRichBolt {
 		}
 
 		// Final filtered string/tweet!
+		System.out.println("TWEET: " + sb.toString());
+
 		collector.emit(new Values(lang, sb.toString()));
 
 	}
