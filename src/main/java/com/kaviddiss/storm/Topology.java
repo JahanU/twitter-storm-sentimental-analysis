@@ -15,7 +15,9 @@ public class Topology {
 		TopologyBuilder builder = new TopologyBuilder();
 		builder.setSpout("TwitterSampleSpout", new TwitterSampleSpout());
 		builder.setBolt("CleanUpTweetsBolt", new CleanUpTweets()).shuffleGrouping("TwitterSampleSpout");
-		builder.setBolt("isTweetPositive", new IsTweetPostive()).shuffleGrouping("CleanUpTweetsBolt");
+
+		builder.setBolt("isTweetPositiveBolt", new IsTweetPostiveBolt()).shuffleGrouping("CleanUpTweetsBolt");
+		builder.setBolt("isTweetNegativeBolt", new IsTweetNegativeBolt()).shuffleGrouping("CleanUpTweetsBolt");
 
 //		builder.setBolt("WordSplitterBolt", new WordSplitterBolt(5)).shuffleGrouping("TwitterSampleSpout");
 //		builder.setBolt("IgnoreWordsBolt", new IgnoreWordsBolt()).shuffleGrouping("WordSplitterBolt");
