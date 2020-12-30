@@ -68,11 +68,12 @@ public class TwitterSampleSpout extends BaseRichSpout {
 		};
 
 		FilterQuery filterQuery = new FilterQuery();
-		String[] findTheseWords = { "#COVID19", "#Vaccine", "#COVIDVaccine", "#Pfizer", "#BioNTech" };
-//		String[] findTheseWords = { "#Vaccine", "#Pfizer", "#BioNTech" };
+		// Below is the old FilterQueries I used
+//		String[] findTheseWords = { "COVID19", "Covid", "Vaccine", "COVIDVaccine", "Pfizer", "BioNTech" };
+		String[] findTheseWords = { "Vaccine", "Pfizer", "BioNTech" };
 
 		filterQuery.track(findTheseWords);
-		String[] onlyTheseLanguages = { "en" };
+		String[] onlyTheseLanguages = { "en" }; // Filter by English language
 		filterQuery.language(onlyTheseLanguages);
 
 		TwitterStreamFactory factory = new TwitterStreamFactory();

@@ -16,16 +16,13 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-/**
- * Receives tweets and emits its words over a certain length.
- */
 public class IsTweetNegativeBolt extends BaseRichBolt {
 
 	private static final long serialVersionUID = 5151173513759399636L;
 
 	private OutputCollector collector;
 	private ArrayList<String> stopwords = new ArrayList<String>();
-	private Map<String, String> map = new HashMap<String, String>();
+	private Map<String, String> wordRatingMap = new HashMap<String, String>();
 
 	public IsTweetNegativeBolt() {
 
@@ -35,14 +32,14 @@ public class IsTweetNegativeBolt extends BaseRichBolt {
 			String line = "";
 			while ((line = stop.readLine()) != null) {
 				this.stopwords.add(line);
+				// Stopwords are meaningless words with no score e.g. [the, and, me]
 			}
 
-			System.out.println();
 			BufferedReader in = new BufferedReader(new FileReader("Data/AFINN"));
 			line = "";
 			while ((line = in.readLine()) != null) {
 				String parts[] = line.split("\t");
-				map.put(parts[0], parts[1]);
+				wordRatingMap.put(parts[0], parts[1]); // HashMap of words with a rating
 			}
 			in.close();
 
@@ -51,9 +48,6 @@ public class IsTweetNegativeBolt extends BaseRichBolt {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println(this.stopwords.size() + " " + this.map.size());
-
 	}
 
 	@Override
@@ -63,8 +57,7 @@ public class IsTweetNegativeBolt extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		String lang = (String) input.getValueByField("lang");
-		String fullTweet = (String) input.getValueByField("word");
+		String fullTweet = (String) input.getValueByField("tweet");
 
 		float tweetScore = 0;
 		String[] tweetArr = fullTweet.split(" ");
@@ -72,21 +65,18 @@ public class IsTweetNegativeBolt extends BaseRichBolt {
 		for (String word : tweetArr) {
 			word = word.toLowerCase();
 
-			if (!this.stopwords.contains(word) && this.map.get(word) != null) {
-				String wordScore = map.get(word);
-				tweetScore = tweetScore + Integer.parseInt(wordScore);
+			// loop through words in tweet, get the score of the tweet
+			if (!this.stopwords.contains(word) && this.wordRatingMap.get(word) != null) {
+				String wordScore = wordRatingMap.get(word);
+				tweetScore += Integer.parseInt(wordScore); // Update score
 			}
 		}
-
-		// if tweet is pos, we emit this
-		if (tweetScore < 0) {
-			System.out.println("Negative: " + tweetScore + " --- " + fullTweet);
+		if (tweetScore < 0) // if tweet is neg, we emit this
 			collector.emit(new Values(tweetScore, fullTweet));
-		}
 	}
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("rating", "word"));
+		declarer.declare(new Fields("score", "tweet"));
 	}
 }

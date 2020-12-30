@@ -6,7 +6,7 @@ import backtype.storm.topology.TopologyBuilder;
 
 public class Topology {
 
-	static final String TOPOLOGY_NAME = "storm-twitter-word-count";
+	static final String TOPOLOGY_NAME = "storm-twitter-covid-vaccine-analysis";
 
 	public static void main(String[] args) {
 		Config config = new Config();
@@ -14,14 +14,13 @@ public class Topology {
 
 		TopologyBuilder builder = new TopologyBuilder();
 		builder.setSpout("TwitterSampleSpout", new TwitterSampleSpout());
-		builder.setBolt("CleanUpTweetsBolt", new CleanUpTweets()).shuffleGrouping("TwitterSampleSpout");
-
+		builder.setBolt("CleanUpTweetsBolt", new CleanUpTweetsBolt()).shuffleGrouping("TwitterSampleSpout");
 		builder.setBolt("isTweetPositiveBolt", new IsTweetPostiveBolt()).shuffleGrouping("CleanUpTweetsBolt");
 		builder.setBolt("isTweetNegativeBolt", new IsTweetNegativeBolt()).shuffleGrouping("CleanUpTweetsBolt");
 
-//		builder.setBolt("WordSplitterBolt", new WordSplitterBolt(5)).shuffleGrouping("TwitterSampleSpout");
-//		builder.setBolt("IgnoreWordsBolt", new IgnoreWordsBolt()).shuffleGrouping("WordSplitterBolt");
-//		builder.setBolt("WordCounterBolt", new WordCounterBolt(10, 5 * 60, 50)).shuffleGrouping("IgnoreWordsBolt");
+		ScoreCountBolt scoreCountObj = new ScoreCountBolt();
+		builder.setBolt("ScoreCountBoltPos", scoreCountObj).shuffleGrouping("isTweetPositiveBolt");
+		builder.setBolt("ScoreCountBoltNeg", scoreCountObj).shuffleGrouping("isTweetNegativeBolt");
 
 		final LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology(TOPOLOGY_NAME, config, builder.createTopology());
