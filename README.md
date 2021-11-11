@@ -3,11 +3,11 @@ The code subscribes to Tweets containing the filter query of "Vaccine", "Pfizer"
 
 This project contains a simple storm topology that connects to the sample stream of the Twitter Streaming API and analysis the sentiment of each tweet, determining if it is positive/negative. All tweets collected are then tallied up.
 
-Results: Negative tweets outweighed positive tweets.
+**Results:** Negative tweets outweighed positive tweets.
 
 This was for a university assignment, so some design aspects were limited, namely the need to have both a positive and negative class instead of merging the two together. A working AI solution was found and implemented found using CoreNLP (https://stanfordnlp.github.io/CoreNLP/) but was not permitted for the assignment.
 
-To get started:
+**To get started:**
 
 Clone this repo
 Import as existing Maven project in Eclipse
