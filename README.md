@@ -1,7 +1,7 @@
 
 The code subscribes to Tweets containing the filter query of "Vaccine", "Pfizer", "BioNTech". Keeping stats on the sentiment around tweets related to covid-19 vaccinations.
 
-This project contains a simple storm topology that connects to the sample stream of the Twitter Streaming API and analysis the sentiment of each tweet, determining if it is positive/negative. All tweets collected are then tallied up.
+This project contains a simple storm topology (**Apache Storm**) that connects to the sample stream of the Twitter Streaming API and analysis the sentiment of each tweet, determining if it is positive/negative. All tweets collected are then tallied up.
 
 **Results:** Negative tweets outweighed positive tweets.
 
